@@ -43,8 +43,9 @@ class MyHomePage extends StatelessWidget {
               ], begin: Alignment.bottomRight, end: Alignment.topCenter)),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Column(
+      body: Container(
+        height: 500,
+        child: ListView(
           children: const [
             SizedBox(
               width: double.infinity,
