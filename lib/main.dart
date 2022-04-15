@@ -32,6 +32,7 @@ class MyHomePage extends StatelessWidget {
         toolbarHeight: 70,
         title: Text('Expense Manager', style: GoogleFonts.lato()),
         centerTitle: true,
+        actions: const [IconButton(onPressed: null, icon: Icon(Icons.add))],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
@@ -43,22 +44,51 @@ class MyHomePage extends StatelessWidget {
               ], begin: Alignment.bottomRight, end: Alignment.topCenter)),
         ),
       ),
-      body: Container(
-        height: 500,
-        child: ListView(
-          children: const [
-            SizedBox(
-              width: double.infinity,
-              child: Card(
-                elevation: 12,
-                // color: Colors.orangeAccent,
-                child: Text('chart!'),
+      body: SingleChildScrollView(
+        child: Container(
+          height: 500,
+          child: Column(
+            children: const [
+              SizedBox(
+                width: double.infinity,
+                child: Card(
+                  elevation: 12,
+                  // color: Colors.orangeAccent,
+                  child: Text('chart!'),
+                ),
               ),
-            ),
-            UserTransaction()
-          ],
+              UserTransaction()
+            ],
+          ),
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: const FloatingActionButton(
+        backgroundColor: Colors.orangeAccent,
+        onPressed: null,
+        child: Icon(Icons.add),
+      ),
+      // bottomNavigationBar: BottomAppBar(
+      //   shape: const CircularNotchedRectangle(),
+      //   notchMargin: 4,
+      //   child: Row(
+      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      //     children: const [
+      //       IconButton(
+      //           onPressed: null,
+      //           icon: Icon(
+      //             Icons.home,
+      //             color: Colors.orangeAccent,
+      //           )),
+      //       IconButton(
+      //           onPressed: null,
+      //           icon: Icon(
+      //             Icons.settings,
+      //             color: Colors.orangeAccent,
+      //           ))
+      //     ],
+      //   ),
+      // ),
     );
   }
 }
