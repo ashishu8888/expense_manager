@@ -1,29 +1,76 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:expense_manager/widgets/new_transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import './widgets/user_transaction.dart';
+import './widgets/transactionList.dart';
+import 'models/transaction.dart';
+import './widgets/chart.dart';
 
 void main(List<String> args) {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  MyApp();
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
+      title: 'Personal ',
       home: MyHomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key? key}) : super(key: key);
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key}) : super(key: key);
 
-  String? inputTitle;
-  String? inputAmount;
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  late String inputTitle;
+  late String inputAmount;
+
+  final List<Transactions> userTransaction = [
+    //Transactions(id: '1', title: 'Zomato', amount: 125, dd: DateTime.now()),
+  ];
+  List<Transactions> get _recentTransaction {
+    return userTransaction.where((tx) {
+      return tx.dd.isAfter(DateTime.now().subtract(const Duration(days: 7)));
+    }).toList();
+  }
+
+  void _addNewTransaction(
+      String txtitle, double txamount, DateTime choosenDate) {
+    final newtxt = Transactions(
+        id: DateTime.now().toString(),
+        title: txtitle,
+        amount: txamount,
+        dd: choosenDate);
+    setState(() {
+      userTransaction.add(newtxt);
+    });
+  }
+
+  void _startAddNewTransaction(BuildContext ctx) {
+    showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return NewTransaction(_addNewTransaction);
+        });
+  }
+
+  void deleteTransaction(String id) {
+    setState(() {
+      userTransaction.removeWhere((tx) {
+        return tx.id == id;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +79,13 @@ class MyHomePage extends StatelessWidget {
         toolbarHeight: 70,
         title: Text('Expense Manager', style: GoogleFonts.lato()),
         centerTitle: true,
-        actions: const [IconButton(onPressed: null, icon: Icon(Icons.add))],
+        actions: [
+          IconButton(
+              onPressed: () {
+                _startAddNewTransaction(context);
+              },
+              icon: const Icon(Icons.add))
+        ],
         flexibleSpace: Container(
           decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
@@ -48,47 +101,22 @@ class MyHomePage extends StatelessWidget {
         child: Container(
           height: 500,
           child: Column(
-            children: const [
+            children: [
               SizedBox(
-                width: double.infinity,
-                child: Card(
-                  elevation: 12,
-                  // color: Colors.orangeAccent,
-                  child: Text('chart!'),
-                ),
-              ),
-              UserTransaction()
+                  width: double.infinity, child: Chart(_recentTransaction)),
+              TransactionList(userTransaction, deleteTransaction)
             ],
           ),
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: const FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orangeAccent,
-        onPressed: null,
-        child: Icon(Icons.add),
+        onPressed: () {
+          _startAddNewTransaction(context);
+        },
+        child: const Icon(Icons.add),
       ),
-      // bottomNavigationBar: BottomAppBar(
-      //   shape: const CircularNotchedRectangle(),
-      //   notchMargin: 4,
-      //   child: Row(
-      //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //     children: const [
-      //       IconButton(
-      //           onPressed: null,
-      //           icon: Icon(
-      //             Icons.home,
-      //             color: Colors.orangeAccent,
-      //           )),
-      //       IconButton(
-      //           onPressed: null,
-      //           icon: Icon(
-      //             Icons.settings,
-      //             color: Colors.orangeAccent,
-      //           ))
-      //     ],
-      //   ),
-      // ),
     );
   }
 }

@@ -1,14 +1,22 @@
-// ignore_for_file: deprecated_member_use
-import './user_transaction.dart';
+// ignore_for_file: deprecated_member_us
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-class NewTransaction extends StatelessWidget {
+class NewTransaction extends StatefulWidget {
   final Function txnew;
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
-  // ignore: use_key_in_widget_constructors
+
   NewTransaction(this.txnew);
 
+  @override
+  State<NewTransaction> createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+  final titleController = TextEditingController();
+
+  final amountController = TextEditingController();
+
+  DateTime? _selectedDate;
   void submitData() {
     var enteredTitle = titleController.text;
     final enteredAmount = double.parse(amountController.text);
@@ -20,7 +28,37 @@ class NewTransaction extends StatelessWidget {
       enteredTitle += ' (Free) ';
     }
 
-    txnew(enteredTitle, enteredAmount);
+    widget.txnew(enteredTitle, enteredAmount, _selectedDate);
+
+    Navigator.of(context).pop();
+  }
+
+  void _DatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now(),
+      builder: (BuildContext context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.dark(
+              primary: Colors.orangeAccent,
+              onPrimary: Colors.deepOrange,
+              surface: Colors.deepOrange.withOpacity(0.2),
+              onSurface: Colors.orangeAccent,
+            ),
+            dialogBackgroundColor: Colors.white,
+          ),
+          child: child!,
+        );
+      },
+    ).then((pickedDate) {
+      if (pickedDate == null) return;
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    });
   }
 
   @override
@@ -41,11 +79,31 @@ class NewTransaction extends StatelessWidget {
               keyboardType: TextInputType.number,
               onSubmitted: (_) => submitData(),
             ),
-            FlatButton(
-              color: Colors.orangeAccent,
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedDate == null
+                        ? 'No date choosen'
+                        : DateFormat.yMd().format(_selectedDate!),
+                    style: TextStyle(color: Colors.deepOrangeAccent),
+                  ),
+                ),
+                FlatButton(
+                    onPressed: _DatePicker,
+                    child: const Text(
+                      'Choose Date',
+                      style: TextStyle(
+                          color: Colors.orangeAccent,
+                          fontWeight: FontWeight.bold),
+                    ))
+              ],
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.orangeAccent),
               onPressed: submitData,
               child: const Text(
-                ' \u{20B9} ',
+                ' ₹ ',
                 style: TextStyle(fontSize: 25),
               ),
             )

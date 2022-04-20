@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class Transactions {
   final String id;
   final String title;
